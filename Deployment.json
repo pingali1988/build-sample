@@ -1,0 +1,149 @@
+{
+	"apiVersion": "extensions/v1beta1",
+	"kind": "Deployment",
+	"metadata": {
+		"name": "prdp-hct391mcpetw401"
+	},
+	"spec": {
+		"replicas": 2,
+		"template": {
+			"metadata": {
+				"labels": {
+					"app": "temp-dp"
+				}
+			},
+			"spec": {
+				"containers": [{
+					"name": "datapower",
+					"image": "openshiftquaylab.state.mi.us/vbalakrishnan/dp@sha256:e5be9f422715d409867de8f0c592a175268f2095b5d7e457222e38872e251fce",
+					"imagePullPolicy": "IfNotPresent",
+					"stdin": true,
+					"tty": true,
+					"ports": [{
+							"name": "web-mgmt",
+							"containerPort": 9090,
+							"protocol": "TCP"
+						},
+						{
+							"name": "api-internal",
+							"containerPort": 2444,
+							"protocol": "TCP"
+						},
+						{
+							"name": "apic",
+							"containerPort": 2443,
+							"protocol": "TCP"
+						},
+						{
+							"name": "xml-mgmt",
+							"containerPort": 5550,
+							"protocol": "TCP"
+						},
+						{
+							"name": "ssh",
+							"containerPort": 2200,
+							"protocol": "TCP"
+						},
+						{
+							"name": "api",
+							"containerPort": 8443,
+							"protocol": "TCP"
+						},
+						{
+							"name": "tls",
+							"containerPort": 443,
+							"protocol": "TCP"
+						},
+						{
+							"name": "rest-mgmt",
+							"containerPort": 5554,
+							"protocol": "TCP"
+						}
+					],
+					"env": [{
+							"name": "DATAPOWER_ACCEPT_LICENSE",
+							"value": "true"
+						},
+						{
+							"name": "DATAPOWER_INTERACTIVE",
+							"value": "true"
+						}
+					],
+					"volumeMounts": [{
+							"mountPath": "/drouter/config",
+							"name": "volume-drouter"
+						},
+						{
+							"mountPath": "/drouter/local",
+							"name": "volume-local"
+						},
+						{
+							"mountPath": "/root/secure/usrcerts",
+							"name": "volume-certs"
+						},
+						{
+							"mountPath": "/root/secure/sharedcerts",
+							"name": "volume-sharedcerts"
+						},
+						{
+							"mountPath": "/drouter/chkpoints",
+							"name": "volume-chkpoints"
+						},
+						{
+							"mountPath": "/drouter/temporary",
+							"name": "volume-log"
+						},
+						{
+							"mountPath": "/drouter/config/services",
+							"name": "volume-config-services",
+							"readOnly": "false"
+						}
+					]
+				}],
+				"volumes": [{
+						"name": "volume-drouter",
+						"persistentVolumeClaim": {
+							"claimName": "config-volume"
+						}
+					},
+					{
+						"name": "volume-local",
+						"persistentVolumeClaim": {
+							"claimName": "local-volume"
+						}
+					},
+					{
+						"name": "volume-certs",
+						"persistentVolumeClaim": {
+							"claimName": "certs-volume"
+						}
+					},
+					{
+						"name": "volume-sharedcerts",
+						"persistentVolumeClaim": {
+							"claimName": "sharedcerts-volume"
+						}
+					},
+					{
+						"name": "volume-chkpoints",
+						"persistentVolumeClaim": {
+							"claimName": "chkpoints-volume"
+						}
+					},
+					{
+						"name": "volume-log",
+						"persistentVolumeClaim": {
+							"claimName": "log-volume"
+						}
+					},
+					{
+						"name": "volume-config-services",
+						"configMap": {
+							"name": "services-config"
+						}
+					}
+				]
+			}
+		}
+	}
+}
